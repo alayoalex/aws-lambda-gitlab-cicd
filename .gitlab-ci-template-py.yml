@@ -1,0 +1,34 @@
+image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+
+before_script:
+  - apt-get update -y
+  - apt install -y zip jq
+  - apt install -y git
+
+stages:
+  - deploy
+
+deploy_main:
+  stage: deploy
+
+  only:
+    - dev # We will run the CD only when something is going to change in this branch.
+
+  script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region us-east-2
+    - export CURRENT_PROJECT=$(echo $CI_JOB_NAME | sed 's/deploy_//g')
+    - |
+      if [ "$CURRENT_PROJECT" != "main" ];
+      then  
+        echo "Triggered deployment for $CURRENT_PROJECT";
+        cd ./$FOLDER/$CURRENT_PROJECT
+        zip -r $CURRENT_PROJECT.zip . -x \*.pyc *.git* *.bat Makefile
+        aws lambda update-function-code --function-name $LAMBDA_NAME --zip-file fileb://$CURRENT_PROJECT.zip || aws lambda create-function --function-name $LAMBDA_NAME --runtime $LAMBDA_RUNTIME --role $ROLE_ARN --handler $LAMBDA_HANDLER --zip-file fileb://$CURRENT_PROJECT.zip --memory-size 1024        
+        export VERSION=$(aws function-updated --function-name $LAMBDA_NAME | aws lambda publish-version --function-name $LAMBDA_NAME | grep -o '"Version": "[^"]*' | grep -o '[^"]*$')
+        aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
+      fi
+
+  environment:
+    name: master

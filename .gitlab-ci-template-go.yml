@@ -1,0 +1,40 @@
+image: golang:1.16.3
+
+before_script:
+  - apt-get update -y
+  - apt install -y git
+
+stages:
+  - deploy
+
+deploy_main:
+  stage: deploy
+  
+  tags:
+    - docker
+    - gce
+  
+  only:
+    - dev # We will run the CD only when something is going to change in master branch.
+
+  script:
+    - export CURRENT_PROJECT=$(echo $CI_JOB_NAME | sed 's/deploy_//g')
+    - |
+      if [ "$CURRENT_PROJECT" != "main" ];
+      then
+        apt install -y zip jq
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        ./aws/install
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set region $AWS_REGION
+        echo "Triggered deployment for $CURRENT_PROJECT";
+        cd ./$FOLDER/$CURRENT_PROJECT
+        chmod +x deploy.sh
+        ./deploy.sh $LAMBDA_NAME $ROLE_ARN
+        # export VERSION=$(aws function-updated --function-name $LAMBDA_NAME | aws lambda publish-version --function-name $LAMBDA_NAME | grep -o '"Version": "[^"]*' | grep -o '[^"]*$')
+        # aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
+        rm -rf main
+        rm -rf main.zip
+      fi
