@@ -170,8 +170,20 @@ def get_lambdas_by_module():
 def get_lambdas_by_commit_diff():
     working_path = get_working_path()
     modified_lambdas = gitpy_wrapper.get_modified_lambdas(working_path)
+    # Deleting duplicates folders
+    i = 0
+    for lambda_path in modified_lambdas:
+        lambda_name = lambda_path.split('/')[-2]
+        for j in range(i+1, len(modified_lambdas)-1):
+            lambda_path2 = modified_lambdas[j]
+            lambda_name2 = lambda_path2.split('/')[-2]
+            while lambda_name2 == lambda_name:
+                modified_lambdas.remove(lambda_path2)
+                lambda_path2 = modified_lambdas[j]
+                lambda_name2 = lambda_path2.split('/')[-2]
+            break  # Because the folders are sorted by Name
+        i += 1
     return modified_lambdas
-
 
 def get_specific_lambdas():
     pass
