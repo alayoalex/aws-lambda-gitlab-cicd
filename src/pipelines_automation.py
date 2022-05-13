@@ -177,10 +177,10 @@ def get_lambdas_by_commit_diff():
         for j in range(i+1, len(modified_lambdas)-1):
             lambda_path2 = modified_lambdas[j]
             lambda_name2 = lambda_path2.split('/')[-2]
-            while lambda_name2 == lambda_name:
-                modified_lambdas.remove(lambda_path2)
+            while lambda_name2 == lambda_name and j < len(modified_lambdas):
                 lambda_path2 = modified_lambdas[j]
                 lambda_name2 = lambda_path2.split('/')[-2]
+                modified_lambdas.remove(lambda_path2)
             break  # Because the folders are sorted by Name
         i += 1
     return modified_lambdas
