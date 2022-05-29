@@ -24,7 +24,7 @@ deploy_main:
       then  
         echo "Triggered update of envs for $CURRENT_PROJECT";
         export VERSION=$(aws lambda get-alias --function-name $LAMBDA_NAME --name $ENV_SOURCE | grep -o '"FunctionVersion": "[^"]*' | grep -o '[^"]*$')
-        aws lambda update-alias --function-name $LAMBDA_NAME --name $ENV_NAME --function-version $VERSION
+        aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION || aws lambda create-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
       fi
 
   environment:

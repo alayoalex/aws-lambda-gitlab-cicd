@@ -34,7 +34,7 @@ deploy_main:
         chmod +x deploy.sh
         ./deploy.sh $LAMBDA_NAME $ROLE_ARN
         # export VERSION=$(aws function-updated --function-name $LAMBDA_NAME | aws lambda publish-version --function-name $LAMBDA_NAME | grep -o '"Version": "[^"]*' | grep -o '[^"]*$')
-        # aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
+        # aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION || aws lambda create-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
         rm -rf main
         rm -rf main.zip
       fi

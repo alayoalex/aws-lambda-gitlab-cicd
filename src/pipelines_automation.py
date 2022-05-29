@@ -5,6 +5,7 @@ import gitpy_wrapper
 
 twospace = 2*" "
 fourspace = 4*" "
+# TODO parametrizar lambda functions folder name
 const_root_relative_folder = 'elroisupplies-serverless-lambdas'
 lambdas_directory = 'src'
 role_arn = 'arn:aws:iam::$ACCOUNT:role/$ROLE_NAME'
@@ -184,6 +185,7 @@ def get_lambdas_by_commit_diff():
             break  # Because the folders are sorted by Name
         i += 1
     return modified_lambdas
+
 
 def get_specific_lambdas():
     pass

@@ -3,30 +3,6 @@ import sys
 import os
 import pipelines_automation as automation
 
-"""
-- Listar todas las lambdas
-    > python pipelines.py --see --all
-- Listar todas las lambdas por modulos
-    > python pipelines.py --see --mod
-- Listar todas las lambdas modificadas
-    > python pipelines.py --see --commit
-- Dar la oportunidad de seleccionar que lambdas se quieren desplegar
-    * Todas las lambdas de un modulo
-        > python pipelines.py -d -a
-    * Elegir una lambda en específico
-        > python pipelines.py -d -l name
-    * Elegir un grupo de lambdas proporcionando una lista de sus números
-        > python pipelines.py -d -l 1 2 3
-    * Elegir aquellas lambdas que se hayan modificado basado en el commit
-        > python pipelines.py -d --commit
-- Elegir a qué ambiente actualizar, si a dev, qa o prod
-    > python pipelines.py -d -c --commit --env {dev, qa, prod}
-- Elegir qué lambdas actualizar, si a dev, qa o prod
-    > python pipelines.py --env {dev, qa, prod} --to {dev, qa, prod} --list <number of the lambdas,...>
-- Proporcionar información al usuario de eventos (logging)
-- Añadir configuraciones especificas a cada stage de cada lambda 
-"""
-
 
 def show_all_lambdas_repo():
     l = automation.get_all_lambdas_from_repo()

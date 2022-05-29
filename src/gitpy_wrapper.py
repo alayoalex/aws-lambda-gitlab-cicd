@@ -4,7 +4,7 @@ from git import Repo
 
 def get_modified_lambdas(path):
     repo = Repo(os.path.abspath('.'))
-    # Aquí está harcodeada la rama (dev), pero debería ponerse automática.
+    # TODO Aquí está harcodeada la rama (dev), pero debería ponerse automática.
     tree = repo.heads.dev.commit.diff('HEAD~1')
     modified_lambdas = []
     for item in tree:

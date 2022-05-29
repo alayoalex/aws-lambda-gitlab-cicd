@@ -27,7 +27,7 @@ deploy_main:
         zip -r $CURRENT_PROJECT.zip . -x \*.pyc *.git* *.bat Makefile
         aws lambda update-function-code --function-name $LAMBDA_NAME --zip-file fileb://$CURRENT_PROJECT.zip || aws lambda create-function --function-name $LAMBDA_NAME --runtime $LAMBDA_RUNTIME --role $ROLE_ARN --handler $LAMBDA_HANDLER --zip-file fileb://$CURRENT_PROJECT.zip --memory-size 1024        
         export VERSION=$(aws function-updated --function-name $LAMBDA_NAME | aws lambda publish-version --function-name $LAMBDA_NAME | grep -o '"Version": "[^"]*' | grep -o '[^"]*$')
-        aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
+        aws lambda update-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION || aws lambda create-alias --function-name $LAMBDA_NAME --name $LAMBDA_ALIAS --function-version $VERSION
       fi
 
   environment:
